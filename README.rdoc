@@ -2,5 +2,11 @@
 
 rawit is also known as "Bird's eye chili", see http://en.wikipedia.org/wiki/Rawit
 
+== Status
 
+So far this is just an experiment to try out something new (0mq).
+
+Expect the worst.
+
+Dragons hatching rotten eggs.
 

@@ -1,3 +1,14 @@
+begin
+  require "zmq"
+  require "active_support"
+  require "active_support/core_ext"
+rescue LoadError
+  require "rubygems"
+  require "zmqp"
+  require "active_support"
+  require "active_support/core_ext"
+end
+
 module Rawit
 
   $:.unshift(File.expand_path('..', __FILE__))

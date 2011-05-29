@@ -15,7 +15,7 @@ module Rawit
 
     def services
       patterns = directories.map{|d| d += '/*/run'}
-      Dir[*patterns].map{|f| f.gsub(%r{/run,''})}
+      Dir[*patterns].map{|f| f.gsub(%r{/run$},'')}
     end
 
     def status

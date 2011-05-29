@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+begin
+  require 'rawit/commands'
+rescue LoadError
+  rawit_path = File.expand_path("../../lib", __FILE__)
+  $:.unshift(rawit_path)
+  require 'rawit/commands'
+end

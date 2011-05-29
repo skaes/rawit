@@ -17,7 +17,7 @@ module Rawit
       loop do
         data = @inbound.recv
         j = JSON.parse(data)
-        p j.class
+        p j
       end
     end
 

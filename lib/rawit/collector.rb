@@ -1,7 +1,12 @@
+require 'socket'
+
 module Rawit
   class Collector
     def initialize
+    end
 
+    def hostname
+      Socket.gethostname
     end
 
     def processes
@@ -14,17 +19,23 @@ module Rawit
     end
 
     def services
-      patterns = directories.map{|d| d += '/*/run'}
-      Dir[*patterns].map{|f| f.gsub(%r{/run$},'')}
+      patterns = directories.map{|d| d += '/*'}
+      Dir[*patterns].to_a
     end
 
     def status
       result = []
       unless services.empty?
-        `sv status #{services}`.chomp.split("\n").each do |l|
+        `sv status #{services.join(' ')}`.chomp.split("\n").each do |l|
+          puts l
           service, logger = l.split(/;/)
-          if service =~ /^(.+): (.+): \(pid: (\d+)\) (\d+)s/
-            result << {:status => $1, :name => $2, :pid => $3.to_i, :time => $4.to_i}
+          puts service
+          # run: /opt/local/var/service/test1: (pid 60957) 582s
+          # down: /opt/local/var/service/test2: 240s, normally up
+          if service =~ /^(run): (.+): \(pid (\d+)\) (\d+)s/
+            result << {:host => hostname, :status => $1, :name => $2, :pid => $3.to_i, :time => $4.to_i}
+          elsif service =~ /^(down): (.+): (\d+)s, normally (.*)(, wants (.*))?/
+            result << {:host => hostname, :status => $1, :name => $2, :time => $3.to_i, :normally => $4, :wants => $6}
           end
         end
       end

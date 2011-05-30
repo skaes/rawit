@@ -1,3 +1,5 @@
+require "zmq"
+
 module Rawit
   class Agent
     include Logging

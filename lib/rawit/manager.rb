@@ -1,23 +1,26 @@
 require "json"
+require "em-zeromq"
 
 module Rawit
   class Manager
     include Logging
 
-    def initialize
-      logger.info "Opening connection for READ"
-      @context = ZMQ::Context.new(1)
-      @inbound = @context.socket(ZMQ::PULL)
-      @inbound.bind("tcp://127.0.0.1:9000")
+    class PullHandler
+      attr_reader :received
+      def on_readable(socket, messages)
+        messages.each do |m|
+          j = JSON.parse(m.copy_out_string)
+          p j
+        end
+      end
     end
 
     def run
-      logger.info "rawit manager running"
-      trap_signals
-      loop do
-        data = @inbound.recv
-        j = JSON.parse(data)
-        p j
+      EM.run do
+        trap_signals
+        @context = EM::ZeroMQ::Context.new(1)
+        @socket = @context.bind( ZMQ::PULL, "tcp://127.0.0.1:9000", PullHandler.new)
+        logger.info "rawit manager running"
       end
     end
 
@@ -27,9 +30,7 @@ module Rawit
     end
 
     def terminate
-      @inbound.close if @inbound
-      @context.close if @context
-      exit
+      EM.stop_event_loop
     end
 
   end

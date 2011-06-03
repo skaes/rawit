@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.specification_version = 3
   s.add_runtime_dependency("activesupport",  ["~> 3.0"])
   s.add_runtime_dependency("i18n",           ["~> 0.6"])
-  s.add_runtime_dependency("zmq",            ["~> 2.1"])
   s.add_runtime_dependency("json",           ["~> 1.5"])
   s.add_runtime_dependency("em-zeromq",      ["~> 0.2"])
   s.add_runtime_dependency("ffi",            ["~> 1.0"])

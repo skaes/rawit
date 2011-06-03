@@ -1,11 +1,12 @@
 begin
-  require "active_support"
-  require "active_support/core_ext"
+  require "em-zeromq"
 rescue LoadError
   require "rubygems"
-  require "active_support"
-  require "active_support/core_ext"
+  require "em-zeromq"
 end
+require "json"
+require "active_support"
+require "active_support/core_ext"
 
 module Rawit
 

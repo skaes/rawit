@@ -1,24 +1,29 @@
-require "zmq"
-
 module Rawit
   class Agent
     include Logging
 
-    def initialize
-      logger.info "Opening connection for WRITE"
-      @context = ZMQ::Context.new(1)
-      @outbound = @context.socket(ZMQ::PUSH)
-      @outbound.setsockopt(ZMQ::HWM, 1)
-      @outbound.setsockopt(ZMQ::LINGER, 0)
-      @outbound.connect("tcp://127.0.0.1:9000")
+    class PushHandler
+      attr_reader :received
+      def on_readable(socket, messages)
+        messages.each do |m|
+          j = JSON.parse(m.copy_out_string)
+          p j
+        end
+      end
     end
 
     def run
-      logger.info "rawit agent running"
-      trap_signals
-      loop do
-        logger.error "sending failed" unless @outbound.send(message, ZMQ::NOBLOCK)
-        sleep 1
+      EM.run do
+        trap_signals
+        @context = EM::ZeroMQ::Context.new(1)
+        @socket = @context.socket(ZMQ::PUSH)
+        @socket.setsockopt(ZMQ::HWM, 1)
+        @socket.setsockopt(ZMQ::LINGER, 0)
+        @connection = @context.connect(@socket, "tcp://127.0.0.1:9000")
+        EM.add_periodic_timer(1) do
+          logger.error "sending failed" unless @connection.socket.send_string(message, ZMQ::NOBLOCK)
+        end
+        logger.info "rawit agent running"
       end
     end
 
@@ -34,9 +39,8 @@ module Rawit
     end
 
     def terminate
-      @outbound.close if @outbound
-      @context.close if @context
-      exit
+      EM.stop_event_loop
     end
+
   end
 end

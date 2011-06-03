@@ -1,6 +1,3 @@
-require "json"
-require "em-zeromq"
-
 module Rawit
   class Manager
     include Logging
@@ -19,7 +16,8 @@ module Rawit
       EM.run do
         trap_signals
         @context = EM::ZeroMQ::Context.new(1)
-        @socket = @context.bind( ZMQ::PULL, "tcp://127.0.0.1:9000", PullHandler.new)
+        @socket = @context.socket(ZMQ::PULL)
+        @connection = @context.bind(@socket, "tcp://127.0.0.1:9000", PullHandler.new)
         logger.info "rawit manager running"
       end
     end

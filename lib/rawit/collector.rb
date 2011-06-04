@@ -2,6 +2,8 @@ require 'socket'
 
 module Rawit
   class Collector
+    include Logging
+
     def initialize
     end
 
@@ -27,9 +29,8 @@ module Rawit
       result = []
       unless services.empty?
         `sv status #{services.join(' ')}`.chomp.split("\n").each do |l|
-          puts l
+          logger.debug l
           service, logger = l.split(/;/)
-          puts service
           # run: /opt/local/var/service/test1: (pid 60957) 582s
           # down: /opt/local/var/service/test2: 240s, normally up
           if service =~ /^(run): (.+): \(pid (\d+)\) (\d+)s/

@@ -20,5 +20,6 @@ module Rawit
 
   mattr_accessor :logger
   self.logger = Logger.new($stdout)
+  self.logger.level = Logger::INFO
 
 end

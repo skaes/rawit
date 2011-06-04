@@ -2,16 +2,6 @@ module Rawit
   class Agent
     include Logging
 
-    class PushHandler
-      attr_reader :received
-      def on_readable(socket, messages)
-        messages.each do |m|
-          j = JSON.parse(m.copy_out_string)
-          p j
-        end
-      end
-    end
-
     def run
       EM.run do
         trap_signals
@@ -21,7 +11,11 @@ module Rawit
         @socket.setsockopt(ZMQ::LINGER, 0)
         @connection = @context.connect(@socket, "tcp://127.0.0.1:9000")
         EM.add_periodic_timer(1) do
-          logger.error "sending failed" unless @connection.socket.send_string(message, ZMQ::NOBLOCK)
+          if @connection.socket.send_string(message, ZMQ::NOBLOCK)
+            logger.info "sent service status"
+          else
+            logger.error "sending status failed"
+          end
         end
         logger.info "rawit agent running"
       end
@@ -29,7 +23,7 @@ module Rawit
 
     def message
       msg = Collector.new.status.to_json
-      logger.info msg.inspect
+      logger.debug "sending #{msg.inspect}"
       msg
     end
 

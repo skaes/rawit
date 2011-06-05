@@ -47,7 +47,7 @@ module Rawit
       @outbound.setsockopt(ZMQ::HWM, 1)
       @outbound.setsockopt(ZMQ::LINGER, 0)
       @outbound_connection = @context.connect(@outbound, "tcp://#{manager_hostname}:9000")
-      EM.add_periodic_timer(5) do
+      EM.add_periodic_timer(2) do
         if @outbound_connection.socket.send_string(message, ZMQ::NOBLOCK)
           logger.info "sent service status"
         else

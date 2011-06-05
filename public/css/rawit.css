@@ -5,4 +5,20 @@
 
 #services ul li {
   display: inline;
+  white-space: nowrap;
 }
+
+#services ul li:before {
+	content: "|";
+}
+
+#services ul li.first:before {
+	content: "";
+}
+#services a {
+    color: blue;
+}
+#services a:hover {
+    cursor: pointer;
+}
+

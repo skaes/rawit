@@ -28,6 +28,6 @@
         %td= service['normally']
         %td
           %ul
-            - possible_actions(service['status']).each do |a|
-              %li
+            - possible_actions(service['status']).each_with_index do |a,i|
+              %li{:class => i==0 ? "first" : ""}
                 %a{:class => "service-action", :data => {:host => host, :service => service['name'], :action => a}}= a

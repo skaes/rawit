@@ -6,17 +6,8 @@ module Rawit
       EM.run do
         trap_signals
         @context = EM::ZeroMQ::Context.new(1)
-        @socket = @context.socket(ZMQ::PUSH)
-        @socket.setsockopt(ZMQ::HWM, 1)
-        @socket.setsockopt(ZMQ::LINGER, 0)
-        @connection = @context.connect(@socket, "tcp://127.0.0.1:9000")
-        EM.add_periodic_timer(1) do
-          if @connection.socket.send_string(message, ZMQ::NOBLOCK)
-            logger.info "sent service status"
-          else
-            logger.error "sending status failed"
-          end
-        end
+        setup_outbound
+        setup_inbound
         logger.info "rawit agent running"
       end
     end
@@ -34,6 +25,46 @@ module Rawit
 
     def terminate
       EM.stop_event_loop
+    end
+
+    def messages_received(messages)
+      messages.each do |m|
+        j = JSON.parse(m.copy_out_string)
+        action = j["action"]
+        service = j["service"]
+        cmd = "sv #{action} #{service}"
+        logger.info `#{cmd}`
+      end
+    end
+
+    private
+    def setup_outbound
+      @outbound = @context.socket(ZMQ::PUSH)
+      @outbound.setsockopt(ZMQ::HWM, 1)
+      @outbound.setsockopt(ZMQ::LINGER, 0)
+      @outbound_connection = @context.connect(@outbound, "tcp://127.0.0.1:9000")
+      EM.add_periodic_timer(5) do
+        if @outbound_connection.socket.send_string(message, ZMQ::NOBLOCK)
+          logger.info "sent service status"
+        else
+          logger.error "sending status failed"
+        end
+      end
+    end
+
+    class PullHandler
+      def initialize(agent)
+        @agent = agent
+      end
+      def on_readable(socket, messages)
+        @agent.messages_received(messages)
+      end
+    end
+
+    def setup_inbound
+      @inbound = @context.socket(ZMQ::PULL)
+      @inbound.setsockopt(ZMQ::LINGER, 0)
+      @inbound_connection = @context.bind(@inbound, "tcp://127.0.0.1:9001", PullHandler.new(self))
     end
 
   end

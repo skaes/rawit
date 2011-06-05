@@ -35,8 +35,10 @@ module Rawit
       data = JSON.parse request.body.read
       host = data["host"]
       service = data["service"]
-      logger.info "#{action}: #{data.inspect}"
-      [202, "Request to #{action} service #{service} on #{host} accepted"]
+      msg = "Request to #{action} service #{service} on #{host} accepted"
+      logger.info msg
+      @@manager.send_command(data.merge("action" => action).to_json)
+      [202, msg]
     end
   end
 

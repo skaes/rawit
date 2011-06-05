@@ -4,3 +4,4 @@ Gemfile.lock
 pkg/*
 services/*/supervise
 .DS_Store
+Procfile

@@ -16,7 +16,7 @@ If you feel adventurous and are on a Mac (should work on any system which has ru
    git clone git://github.com/skaes/rawit.git
    cd rawit
    bundle install
-   foreman start
+   rake start
 
 Then point your browser at http://localhost:4567 and start/stop/restart processes.
 

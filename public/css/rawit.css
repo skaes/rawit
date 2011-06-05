@@ -1,0 +1,8 @@
+#services ul {
+  margin: 0px;
+  padding: 0px;
+}
+
+#services ul li {
+  display: inline;
+}

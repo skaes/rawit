@@ -1,4 +1,14 @@
-%table
+:javascript
+  $(document).ready(function() {
+    $('.service-action').click(function() {
+       var url = "/service/" + $(this).data("action");
+       var json = { "host": $(this).data("host"), "service": $(this).data("service") };
+       var data = JSON.stringify(json);
+       /* alert("posting data: " + data + " to " + url); */
+       $.post(url, data, function(data) { alert(data); }).error(function() { alert("error"); });
+       });
+    });
+%table#services
   %tr
     %th Host
     %th Service
@@ -6,6 +16,7 @@
     %th Status
     %th Since
     %th Normally
+    %th Action
   - @services.each do |host, services|
     - services.each do |service|
       %tr
@@ -15,3 +26,8 @@
         %td= service['status']
         %td= service['since']
         %td= service['normally']
+        %td
+          %ul
+            - possible_actions(service['status']).each do |a|
+              %li
+                %a{:class => "service-action", :data => {:host => host, :service => service['name'], :action => a}}= a

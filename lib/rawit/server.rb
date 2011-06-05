@@ -33,11 +33,11 @@ module Rawit
       action = params[:captures].first
       request.body.rewind  # in case someone already read it
       data = JSON.parse request.body.read
-      host = data["host"]
-      service = data["service"]
+      host = data.delete("host")
+      service = data.delete("service")
       msg = "Request to #{action} service #{service} on #{host} accepted"
       logger.info msg
-      @@manager.send_command(data.merge("action" => action).to_json)
+      @@manager.send_command(host, {"service" => service, "action" => action}.to_json)
       [202, msg]
     end
   end

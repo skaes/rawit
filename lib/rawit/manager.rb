@@ -6,6 +6,7 @@ module Rawit
 
     def initialize
       @services = {}
+      @outbound_connections = {}
     end
 
     def messages_received(messages)
@@ -20,7 +21,6 @@ module Rawit
       trap_signals
       @context = EM::ZeroMQ::Context.new(1)
       setup_inbound
-      setup_outbound
       logger.info "rawit manager running"
       self
     end
@@ -45,18 +45,23 @@ module Rawit
 
     def setup_inbound
       @inbound = @context.socket(ZMQ::PULL)
-      @inbound_connection = @context.bind(@inbound, "tcp://127.0.0.1:9000", PullHandler.new(self))
+      @inbound_connection = @context.bind(@inbound, "tcp://0.0.0.0:9000", PullHandler.new(self))
     end
 
-    def setup_outbound
-      @outbound = @context.socket(ZMQ::PUSH)
-      @outbound.setsockopt(ZMQ::HWM, 1)
-      @outbound.setsockopt(ZMQ::LINGER, 0)
-      @outbound_connection = @context.connect(@outbound, "tcp://127.0.0.1:9001")
+    def setup_outbound(host)
+      @outbound_connections[host] ||=
+        begin
+          socket = @context.socket(ZMQ::PUSH)
+          socket.setsockopt(ZMQ::HWM, 1)
+          socket.setsockopt(ZMQ::LINGER, 1000) # milliseconds
+          # ip = IPSocket.getaddress host
+          @context.connect(socket, "tcp://#{host}:9001")
+        end
     end
 
-    def send_command(message)
-      if @outbound_connection.socket.send_string(message, ZMQ::NOBLOCK)
+    def send_command(host, message)
+      connection = setup_outbound(host)
+      if connection.socket.send_string(message, ZMQ::NOBLOCK)
         logger.info "sent service command"
       else
         logger.error "sending service command failed"

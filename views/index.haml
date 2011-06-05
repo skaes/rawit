@@ -1,0 +1,16 @@
+%table
+  %tr
+    %th Host
+    %th Service
+    %th Pid
+    %th Status
+    %th Since
+    %th Normally
+  - @services.each do |(host,service), e|
+    %tr
+      %td= host
+      %td= service
+      %td= e['pid']
+      %td= e['status']
+      %td= e['time']
+      %td= e['normally']

@@ -10,7 +10,9 @@ require "active_support/core_ext"
 
 module Rawit
 
-  $:.unshift(File.expand_path('..', __FILE__))
+  ROOT = File.expand_path('../..', __FILE__)
+
+  $:.unshift("#{ROOT}/lib")
 
   # use ruby's autoload mechanism for loading rawit classes
   lib_dir = File.expand_path(File.dirname(__FILE__) + '/rawit/')

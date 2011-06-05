@@ -6,11 +6,12 @@
     %th Status
     %th Since
     %th Normally
-  - @services.each do |(host,service), e|
-    %tr
-      %td= host
-      %td= service
-      %td= e['pid']
-      %td= e['status']
-      %td= e['time']
-      %td= e['normally']
+  - @services.each do |host, services|
+    - services.each do |service|
+      %tr
+        %td= host
+        %td= service['name']
+        %td= service['pid']
+        %td= service['status']
+        %td= service['time']
+        %td= service['normally']

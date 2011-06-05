@@ -21,11 +21,7 @@ module Rawit
       logger.debug "received service data"
       messages.each do |m|
         j = JSON.parse(m.copy_out_string)
-        j.each do |entry|
-          host = entry.delete("host")
-          service = entry.delete("name")
-          @services[[host,service]] = entry
-        end
+        @services[j["host"]] = j["services"]
       end
     end
 

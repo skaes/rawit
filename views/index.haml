@@ -1,19 +1,22 @@
 :javascript
+  function action_click() {
+    var action = $(this).data("action");
+    if (action == "sysadmin") {
+      alert("Please contact your sysdamin and pray he's got time");
+    }
+    else {
+      var url = "/service/" + action;
+      var json = { "host": $(this).data("host"), "service": $(this).data("service") };
+      var data = JSON.stringify(json);
+      /* alert("posting data: " + data + " to " + url); */
+      $.post(url, data, function(data) { alert(data); }).error(function() { alert("error"); });
+    }
+  };
+
   $(document).ready(function() {
-    $('.service-action').click(function() {
-       var action = $(this).data("action");
-       if (action == "sysadmin") {
-         alert("Please contact your sysdamin and pray he's got time");
-       }
-       else {
-         var url = "/service/" + action;
-         var json = { "host": $(this).data("host"), "service": $(this).data("service") };
-         var data = JSON.stringify(json);
-         /* alert("posting data: " + data + " to " + url); */
-         $.post(url, data, function(data) { alert(data); }).error(function() { alert("error"); });
-       }
-       });
-    });
+    $('.service-action').click(action_click);
+  });
+
 %table#services
   %tr
     %th Host

@@ -24,4 +24,7 @@ module Rawit
   self.logger = Logger.new($stdout)
   self.logger.level = Logger::INFO
 
+  mattr_accessor :server
+  self.server = "127.0.0.1"
+
 end

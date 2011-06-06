@@ -12,10 +12,6 @@ module Rawit
       end
     end
 
-    def manager_hostname
-      Socket.gethostname
-    end
-
     def message
       msg = Collector.new.status.to_json
       logger.debug "sending #{msg.inspect}"
@@ -46,7 +42,7 @@ module Rawit
       @outbound = @context.socket(ZMQ::PUSH)
       @outbound.setsockopt(ZMQ::HWM, 1)
       @outbound.setsockopt(ZMQ::LINGER, 0)
-      @outbound_connection = @context.connect(@outbound, "tcp://#{manager_hostname}:9000")
+      @outbound_connection = @context.connect(@outbound, "tcp://#{Rawit::server}:9000")
       EM.add_periodic_timer(2) do
         if @outbound_connection.socket.send_string(message, ZMQ::NOBLOCK)
           logger.info "sent service status"

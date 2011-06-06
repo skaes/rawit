@@ -9,6 +9,11 @@ module Rawit
         opts.separator ""
         opts.separator "options:"
 
+        opts.on("-s", "--server", "Specify server host") do |server|
+          require 'rawit'
+          Rawit::server = server
+        end
+
         opts.on("-v", "--verbose", "Set log level to DEBUG") do
           require 'rawit'
           Rawit::logger.level = Logger::DEBUG

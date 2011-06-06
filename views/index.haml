@@ -34,7 +34,7 @@
         %td.name= s['name']
         %td.pid= s['pid']
         %td.status= s['status']
-        %td.since= s['since']
+        %td.since= formatted_time(s['since'])
         %td.normally= s['normally']
         %td.wants= s['wants']
         %td

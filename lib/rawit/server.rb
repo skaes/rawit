@@ -21,6 +21,18 @@ module Rawit
           wants == 'up' ? %w(sysadmin) : %w(start)
         end
       end
+
+      def formatted_time(seconds)
+        days, hrs = seconds.to_i.divmod(3600*24)
+        hrs, mins = hrs.divmod(3600)
+        mins, secs = mins.divmod(60)
+        vals = [days, hrs, mins, secs]
+        vals.shift while vals[0] == 0
+        vals = [0] if vals.empty?
+        vals.map!{|v| sprintf "%02d", v}
+        vals.first.gsub!(/^0(\d)/,'\1')
+        "#{vals.join(':')}s"
+      end
     end
 
     get '/' do

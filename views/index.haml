@@ -30,13 +30,13 @@
   - @services.each do |host, services|
     - services.each do |s|
       %tr
-        %td= host
-        %td= s['name']
-        %td= s['pid']
-        %td= s['status']
-        %td= s['since']
-        %td= s['normally']
-        %td= s['wants']
+        %td.host= host
+        %td.name= s['name']
+        %td.pid= s['pid']
+        %td.status= s['status']
+        %td.since= s['since']
+        %td.normally= s['normally']
+        %td.wants= s['wants']
         %td
           %ul
             - possible_actions(s['status'], s['wants']).each_with_index do |a,i|

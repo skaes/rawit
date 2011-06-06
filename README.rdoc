@@ -19,7 +19,3 @@ If you feel adventurous and are on a Mac (should work on any system which has ru
    rake start
 
 Then point your browser at http://localhost:4567 and start/stop/restart processes.
-
-It still looks butt ugly, but is functional.
-
-Don't worry, the autorefresh will be replaced by websocket magic.

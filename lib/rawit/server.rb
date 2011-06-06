@@ -13,12 +13,12 @@ module Rawit
     end
 
     helpers do
-      def possible_actions(status)
+      def possible_actions(status, wants)
         case status
         when 'run'
           %w(stop restart)
-        else
-          %w(start)
+        when 'down'
+          wants == 'up' ? %w(sysadmin) : %w(start)
         end
       end
     end

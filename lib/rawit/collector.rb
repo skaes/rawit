@@ -35,7 +35,7 @@ module Rawit
           # down: /opt/local/var/service/test2: 240s, normally up
           if service =~ /^(run): (.+): \(pid (\d+)\) (\d+)s/
             result << {:name => $2, :pid => $3.to_i, :status => $1, :since => $4.to_i}
-          elsif service =~ /^(down): (.+): (\d+)s, normally (.*)(, wants (.*))?/
+          elsif service =~ /^(down): (.+): (\d+)s, normally (up|down)(, want (up|down))?/
             result << {:name => $2, :status => $1, :since => $3.to_i, :normally => $4, :wants => $6}
           end
         end

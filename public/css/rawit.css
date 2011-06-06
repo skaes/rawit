@@ -1,6 +1,14 @@
+body, h1, td, th, li, a, span, p, div {
+  font-family: Helvetica, Sans-Serif;
+}
+
 h1 {
   text-align: center;
   color: #2F4F4F;
+}
+
+.error {
+  color:red;
 }
 
 #services {

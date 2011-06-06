@@ -13,13 +13,19 @@ module Rawit
     end
 
     helpers do
-      def possible_actions(status, wants)
+      def possible_actions(service)
+        status, wants = service.values_at('status', 'wants')
         case status
         when 'run'
           %w(stop restart)
         when 'down'
           wants == 'up' ? %w(sysadmin) : %w(start)
         end
+      end
+
+      def needs_warning?(service)
+        status, wants = service.values_at('status', 'wants')
+        status == "down" && wants == "up"
       end
 
       def formatted_time(seconds)

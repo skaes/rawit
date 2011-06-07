@@ -12,3 +12,5 @@ task :start do
   end
   exec "foreman start"
 end
+
+task :default => :start

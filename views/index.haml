@@ -13,14 +13,18 @@
     }
   };
 
+  function get_again_later() {
+    window.setTimeout(get_services, 5000);
+  };
+
   function get_services() {
     $.get('/services', function(services){
       $('#services').replaceWith(services);
       $('.service-action').click(action_click);
-      window.setTimeout(get_services, 5000);
+      get_again_later();
     }).error(function() {
       $('#services').replaceWith('<div class="error" id="services">Error connecting to server.</div>');
-      window.setTimeout(get_services, 5000);
+      get_again_later();
     });
   };
 

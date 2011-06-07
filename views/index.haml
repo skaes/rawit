@@ -18,6 +18,9 @@
       $('#services').replaceWith(services);
       $('.service-action').click(action_click);
       window.setTimeout(get_services, 5000);
+    }).error(function() {
+      $('#services').replaceWith('<div class="error" id="services">Error connecting to server.</div>');
+      window.setTimeout(get_services, 5000);
     });
   };
 

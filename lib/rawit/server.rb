@@ -42,8 +42,12 @@ module Rawit
     end
 
     get '/' do
-      @services = @@manager.services
       haml :index
+    end
+
+    get '/services' do
+      @services = @@manager.services
+      haml :services, :layout => false
     end
 
     post %r{/service/(stop|start|restart)} do

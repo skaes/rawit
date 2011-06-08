@@ -1,15 +1,20 @@
 :javascript
   function action_click() {
     var action = $(this).data("action");
+    var services = $(this).data("service");
+    var hosts = $(this).data("host");
     if (action == "sysadmin") {
       alert("Please contact your sysdamin and pray he's got time");
     }
     else {
-      var url = "/service/" + action;
-      var json = { "host": $(this).data("host"), "service": $(this).data("service") };
-      var data = JSON.stringify(json);
-      /* alert("posting data: " + data + " to " + url); */
-      $.post(url, data, function(data) { alert(data); }).error(function() { alert("error"); });
+      var dialog_message = "Do you really want to " + action + " " + services + " on " + hosts + "?";
+      if (confirm(dialog_message)) {
+        var url = "/service/" + action;
+        var json = { "host": hosts, "service": services };
+        var data = JSON.stringify(json);
+        /* alert("posting data: " + data + " to " + url); */
+        $.post(url, data, function(data) { alert(data); }).error(function() { alert("error"); });
+      }
     }
   };
 

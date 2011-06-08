@@ -5,7 +5,7 @@ module Rawit
     attr_reader :services
 
     def initialize
-      @services = {}
+      @services = Rawit::Services.new
       @outbound_connections = {}
     end
 
@@ -13,7 +13,7 @@ module Rawit
       logger.debug "received service data"
       messages.each do |m|
         j = JSON.parse(m.copy_out_string)
-        @services[j["host"]] = j["services"]
+        @services.update j
       end
     end
 

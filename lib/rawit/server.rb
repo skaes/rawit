@@ -46,8 +46,18 @@ module Rawit
     end
 
     get '/services' do
-      @services = @@manager.services
+      @services = @@manager.services.all
       haml :services, :layout => false
+    end
+
+    get '/host-summary' do
+      @host_summary = @@manager.services.host_summary
+      haml :"host-summary", :layout => false
+    end
+
+    get '/service-summary' do
+      @service_summary = @@manager.services.service_summary
+      haml :"service-summary", :layout => false
     end
 
     post %r{/service/(stop|start|restart)} do
@@ -59,7 +69,9 @@ module Rawit
       service = data.delete("service")
       msg = "Request to #{action} service #{service} on #{host} accepted"
       logger.info msg
-      @@manager.send_command(host, {"service" => service, "action" => action}.to_json)
+      host.split(/ +/).each do |h|
+        @@manager.send_command(h, {"service" => service, "action" => action}.to_json)
+      end
       [202, msg]
     end
   end

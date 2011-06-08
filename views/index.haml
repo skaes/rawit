@@ -13,24 +13,51 @@
     }
   };
 
-  function get_again_later() {
-    window.setTimeout(get_services, 5000);
-  };
+  var refresh_interval = 5000;
 
   function get_services() {
     $.get('/services', function(services){
       $('#services').replaceWith(services);
-      $('.service-action').click(action_click);
-      get_again_later();
+      $('#services .service-action').click(action_click);
+      window.setTimeout(get_services, refresh_interval);
     }).error(function() {
       $('#services').replaceWith('<div class="error" id="services">Error connecting to server.</div>');
-      get_again_later();
+      window.setTimeout(get_services, refresh_interval);
+    });
+  };
+
+  function get_host_summary() {
+    $.get('/host-summary', function(summary){
+      $('#host-summary').replaceWith(summary);
+      $('#host-summary .host-action').click(action_click);
+      window.setTimeout(get_host_summary, refresh_interval);
+    }).error(function() {
+      $('#host-summary').replaceWith('<div class="error" id="host-summary">Error connecting to server.</div>');
+      window.setTimeout(get_host_summary, refresh_interval);
+    });
+  };
+
+  function get_service_summary() {
+    $.get('/service-summary', function(summary){
+      $('#service-summary').replaceWith(summary);
+      $('#service-summary .host-action').click(action_click);
+      window.setTimeout(get_service_summary, refresh_interval);
+    }).error(function() {
+      $('#sevice-summary').replaceWith('<div class="error" id="service-summary">Error connecting to server.</div>');
+      window.setTimeout(get_service_summary, refresh_interval);
     });
   };
 
   $(document).ready(function() {
+    get_host_summary();
+    get_service_summary();
     get_services();
   });
 
 %div#content
+  %h2 Host status summary
+  %div#host-summary
+  %h2 Service status summary
+  %div#service-summary
+  %h2 Service details for all hosts
   %div#services

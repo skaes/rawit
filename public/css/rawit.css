@@ -1,4 +1,4 @@
-body, h1, td, th, li, a, span, p, div {
+body, h1, h2, td, th, li, a, span, p, div {
   font-family: Helvetica, Sans-Serif;
 }
 
@@ -7,55 +7,64 @@ h1 {
   color: #2F4F4F;
 }
 
+h2 {
+  text-align: center;
+  color: #2F4F4F;
+}
+
 .error {
   color:red;
 }
 
-#services {
+.services {
   border-collapse: collapse;
   margin-left: auto;
   margin-right: auto;
 }
 
-#services tr:nth-child(odd) { background-color:#eee; }
-#services tr:nth-child(even) { background-color:#fff; }
-#services tr:first-child { background-color:#ddd; }
+.services tr:nth-child(odd) { background-color:#eee; }
+.services tr:nth-child(even) { background-color:#fff; }
+.services tr:first-child { background-color:#ddd; }
 
-#services td, #services th {
+.services td, .services th {
     border:none;
     border:0px;
     margin:0px;
     padding:7px;
 }
 
-#services .pid, #services .since {
+.pid, .since, .up, .down {
   text-align: right;
 }
 
-#services .status, #services .normally, #services .wants {
+.status, .normally, .wants {
   text-align: center;
 }
 
-#services ul {
+.services ul {
   margin: 0px;
   padding: 0px;
 }
 
-#services ul li {
+.services ul li {
   display: inline;
   white-space: nowrap;
 }
 
-#services ul li:before {
+.services ul li:before {
 	content: "|";
 }
 
-#services ul li.first:before {
+.services ul li.first:before {
 	content: "";
 }
-#services a {
+.services a {
     color: #4682B4;
 }
-#services a:hover {
+.services a:hover {
     cursor: pointer;
+}
+
+#summary {
+    margin-bottom: 20px;
 }

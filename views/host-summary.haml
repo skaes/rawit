@@ -1,0 +1,17 @@
+%table.services#host-summary
+  %tr
+    %th Host
+    %th Services Up
+    %th Services Down
+    %th Action
+  - @host_summary.each do |host, info|
+    - up, down, names = *info
+    %tr
+      %td.host= host
+      %td.up= up
+      %td.down= down
+      %td
+        %ul
+          - %w(start stop restart).each_with_index do |a,i|
+            %li{:class => i==0 ? "first" : ""}
+              %a{:class => "host-action", :data => {:host => host, :service => names.join(' '), :action => a}}= a

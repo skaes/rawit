@@ -17,7 +17,9 @@ module Rawit
   # use ruby's autoload mechanism for loading rawit classes
   lib_dir = File.expand_path(File.dirname(__FILE__) + '/rawit/')
   Dir["#{lib_dir}/*.rb"].each do |libfile|
-    autoload File.basename(libfile)[/^(.*)\.rb$/, 1].classify, libfile
+    const = File.basename(libfile)[/^(.*)\.rb$/, 1].capitalize
+    # puts "autoload #{const}, #{libfile}"
+    autoload const, libfile
   end
 
   mattr_accessor :logger

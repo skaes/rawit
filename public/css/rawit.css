@@ -68,3 +68,7 @@ h2 {
 #summary {
     margin-bottom: 20px;
 }
+
+#logo {
+  vertical-align: middle;
+}

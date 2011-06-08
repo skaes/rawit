@@ -21,7 +21,7 @@
       $('#services .service-action').click(action_click);
       window.setTimeout(get_services, refresh_interval);
     }).error(function() {
-      $('#services').replaceWith('<div class="error" id="services">Error connecting to server.</div>');
+      $('#services').replaceWith('<div class="error bc" id="services">Error connecting to server.</div>');
       window.setTimeout(get_services, refresh_interval);
     });
   };
@@ -32,7 +32,7 @@
       $('#host-summary .host-action').click(action_click);
       window.setTimeout(get_host_summary, refresh_interval);
     }).error(function() {
-      $('#host-summary').replaceWith('<div class="error" id="host-summary">Error connecting to server.</div>');
+      $('#host-summary').replaceWith('<div class="error bc" id="host-summary">Error connecting to server.</div>');
       window.setTimeout(get_host_summary, refresh_interval);
     });
   };
@@ -43,7 +43,7 @@
       $('#service-summary .host-action').click(action_click);
       window.setTimeout(get_service_summary, refresh_interval);
     }).error(function() {
-      $('#service-summary').replaceWith('<div class="error" id="service-summary">Error connecting to server.</div>');
+      $('#service-summary').replaceWith('<div class="error bc" id="service-summary">Error connecting to server.</div>');
       window.setTimeout(get_service_summary, refresh_interval);
     });
   };

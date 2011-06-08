@@ -43,7 +43,7 @@
       $('#service-summary .host-action').click(action_click);
       window.setTimeout(get_service_summary, refresh_interval);
     }).error(function() {
-      $('#sevice-summary').replaceWith('<div class="error" id="service-summary">Error connecting to server.</div>');
+      $('#service-summary').replaceWith('<div class="error" id="service-summary">Error connecting to server.</div>');
       window.setTimeout(get_service_summary, refresh_interval);
     });
   };

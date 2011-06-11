@@ -28,5 +28,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("ffi",            ["~> 1.0"])
 
   s.add_development_dependency("wirble",     [">= 0"])
+  s.add_development_dependency("daemons",    [">= 0"])
 
 end

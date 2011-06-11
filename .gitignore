@@ -5,3 +5,4 @@ pkg/*
 services/*/supervise
 .DS_Store
 Procfile
+etc/sample-server.rb.pid

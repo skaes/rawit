@@ -1,5 +1,7 @@
 module Rawit
   class Services
+    include Logging
+
     def initialize
       @services = {}
     end

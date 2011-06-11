@@ -45,7 +45,7 @@ module Rawit
       @outbound_connection = @context.connect(@outbound, "tcp://#{Rawit::server}:9000")
       EM.add_periodic_timer(2) do
         if @outbound_connection.socket.send_string(message, ZMQ::NOBLOCK)
-          logger.info "sent service status"
+          logger.debug "sent service status"
         else
           logger.error "sending status failed"
         end

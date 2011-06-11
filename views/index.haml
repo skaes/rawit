@@ -53,10 +53,50 @@
     });
   };
 
+  /* The web socket */
+  var ws = null;
+
+  /* connect to the notification data stream */
+  function connect_notifications() {
+    if ( ws == null ) {
+      ws = new WebSocket("ws://" + document.location.hostname + ":9002/");
+      ws.onmessage = function(evt) { update_notifications(JSON.parse(evt.data)); };
+      ws.onclose = function() { ws = null; window.setTimeout(connect_notifications, 5000); };
+      ws.onopen = function() { ws.send('Hi there'); };
+      ws.onerror = function() { alert("websocket error"); }
+    }
+  };
+
+  /* update the notifications */
+  function update_notifications(notifications) {
+    var table = $('#notifications');
+    var list = $('#notifications tr:first-child');
+    for (var i = 0, len = notifications.length; i < len; ++i) {
+      var e = notifications[i];
+      var host = e["host"];
+      var service = e["service"];
+      var time = e["time"].slice(11,19);
+      var message = e["message"];
+      var event = e["event"];
+      var new_row = $("<tr><td>" + time + "</td><td>" + host + "</td><td>" + service + "</td><td>" + event + "</td><td>" + message + "</td></tr>");
+      new_row.hide().addClass("error");
+      var rows = $('#notifications tr');
+      var l = rows.size() - 10;
+      for (j=0; j < l; ++j) {
+        rows.last().remove();
+      }
+      list.after(new_row);
+      remove_color = function(row) { return function() {
+                       window.setTimeout(function() { row.removeClass("error"); } , 10000); }; };
+      new_row.fadeIn(2000, remove_color(new_row) );
+    }
+  };
+
   $(document).ready(function() {
     get_host_summary();
     get_service_summary();
     get_services();
+    connect_notifications();
   });
 
 %div#content
@@ -66,3 +106,11 @@
   %div#service-summary
   %h2 Service details for all hosts
   %div#services
+  %h2 Notifications
+  %table.services#notifications
+    %tr
+      %th Time
+      %th Host
+      %th Service
+      %th Event
+      %th Message

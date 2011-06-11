@@ -1,3 +1,5 @@
+require 'em-websocket'
+
 module Rawit
   class Manager
     include Logging
@@ -7,13 +9,45 @@ module Rawit
     def initialize
       @services = Rawit::Services.new
       @outbound_connections = {}
+      setup_notifier
+    end
+
+    def setup_notifier
+      @sockets = []
+      EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 9002) do |ws|
+        ws.onopen do
+          logger.info "web socket connection established: #{ws.object_id}"
+          @sockets << ws
+        end
+
+        ws.onclose do
+          logger.info "web socket connection closed: #{ws.object_id}"
+          @sockets.delete(ws)
+        end
+
+        ws.onmessage do |msg|
+          logger.info "web socket received message: #{ws.object_id}: #{msg}"
+        end
+      end
+    end
+
+    def notify(msg)
+      @sockets.each do |ws|
+        logger.debug "pushing to websocket: #{ws.object_id}: #{msg}"
+        ws.send msg
+      end
     end
 
     def messages_received(messages)
-      logger.debug "received service data"
       messages.each do |m|
-        j = JSON.parse(m.copy_out_string)
-        @services.update j
+        data = m.copy_out_string
+        logger.debug "received service data: #{data}"
+        j = JSON.parse(data)
+        if j["event"]
+          notify([j].to_json)
+        else
+          @services.update j
+        end
       end
     end
 
@@ -62,7 +96,7 @@ module Rawit
     def send_command(host, message)
       connection = setup_outbound(host)
       if connection.socket.send_string(message, ZMQ::NOBLOCK)
-        logger.info "sent service command"
+        logger.debug "sent service command"
       else
         logger.error "sending service command failed"
       end

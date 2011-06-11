@@ -1,0 +1,2 @@
+#!/bin/bash
+bundle exec rawit notifier exit code:$1 status:$2

@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("i18n",           ["~> 0.6"])
   s.add_runtime_dependency("json",           ["~> 1.5"])
   s.add_runtime_dependency("em-zeromq",      ["~> 0.2"])
+  s.add_runtime_dependency("em-websocket",   ["~> 0.3"])
   s.add_runtime_dependency("ffi",            ["~> 1.0"])
 
   s.add_development_dependency("wirble",     [">= 0"])

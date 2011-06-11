@@ -1,4 +1,5 @@
 #!/bin/bash
+bundle exec rawit notifier start
 while true
 do
 sleep 1

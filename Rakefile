@@ -6,9 +6,9 @@ task :start do
   procfile = "#{my_dir}/Procfile"
   verbose = ENV['debug'] == '1' ? " -v" : ""
   File.open(procfile, "w") do |f|
-    f.puts "services: runsvdir #{my_dir}/services log:...................................................................."
     f.puts "agent: bundle exec rawit agent#{verbose}"
     f.puts "server: bundle exec rawit server#{verbose}"
+    f.puts "services: runsvdir #{my_dir}/services log:...................................................................."
   end
   exec "foreman start"
 end

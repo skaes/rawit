@@ -2,13 +2,24 @@ body, h1, h2, td, th, li, a, span, p, div {
   font-family: Helvetica, Sans-Serif;
 }
 
+html { height: 100%; }
+body {
+  margin: 0px;
+  height: 100%;
+  background: url(/bg.png) repeat-y;
+}
+
 h1 {
-  text-align: center;
   color: #2F4F4F;
+  background: white;
+  border-bottom: 1px solid #2F4F4F;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding: 7px;
+  text-align: center;
 }
 
 h2 {
-  text-align: center;
   color: #2F4F4F;
 }
 
@@ -17,14 +28,11 @@ h2 {
 }
 
 .bc {
-  text-align: center;
   font-size: 120%;
 }
 
 .services {
   border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .services tr:nth-child(odd) { background-color:#eee; }
@@ -57,21 +65,55 @@ h2 {
 }
 
 .services ul li:before {
-	content: "|";
+  content: "|";
 }
 
 .services ul li.first:before {
-	content: "";
+  content: "";
 }
 .services a {
-    color: #4682B4;
+  color: #4682B4;
 }
 .services a:hover {
-    cursor: pointer;
+  cursor: pointer;
+}
+
+#content {
+  margin-left: 170px;
+}
+
+#tabs {
+  float: left;
+  width: 160px;
+}
+
+#tabs ul {
+  margin: 0px;
+  padding: 0px;
+}
+
+#tabs ul li {
+  padding: 20px;
+  margin: 1px;
+  background: #2F4F4F;
+  color: #aaaaaa;
+  white-space: nowrap;
+  font-size: 130%;
+}
+
+#tabs ul li.selected {
+  color: white;
+  background: #3F5F5F;
+  font-weight: bold;
+}
+
+#tabs ul li:hover {
+  cursor: pointer;
+  background: #3F5F5F;
 }
 
 #summary {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 #logo {

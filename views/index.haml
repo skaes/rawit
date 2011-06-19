@@ -81,7 +81,7 @@
       var new_row = $("<tr><td>" + time + "</td><td>" + host + "</td><td>" + service + "</td><td>" + event + "</td><td>" + message + "</td></tr>");
       new_row.hide().addClass("error");
       var rows = $('#notifications tr');
-      var l = rows.size() - 10;
+      var l = rows.size() - 25;
       for (j=0; j < l; ++j) {
         rows.last().remove();
       }
@@ -92,25 +92,46 @@
     }
   };
 
+  function select_tab() {
+    $('.pane').hide();
+    $('.selected').removeClass("selected");
+    $(this).addClass("selected");
+    $($(this).data("pane")).show();
+  }
+
   $(document).ready(function() {
+    $('.pane').hide();
+    $('.tab').click(select_tab);
+    $('#hosts').show();
+    $('.tab').first().addClass("selected");
     get_host_summary();
     get_service_summary();
     get_services();
     connect_notifications();
   });
 
+%div#tabs
+  %ul
+    %li.tab{:data => {:pane => '#hosts'}} Overview
+    %li.tab{:data => {:pane => '#byservice'}} Services
+    %li.tab{:data => {:pane => '#details'}} Processes
+    %li.tab{:data => {:pane => '#notifications'}} Notifications
 %div#content
-  %h2 Host status summary
-  %div#host-summary
-  %h2 Service status summary
-  %div#service-summary
-  %h2 Service details for all hosts
-  %div#services
-  %h2 Notifications
-  %table.services#notifications
-    %tr
-      %th Time
-      %th Host
-      %th Service
-      %th Event
-      %th Message
+  %div.pane#hosts
+    %h2 Host status summary
+    %div#host-summary
+  %div.pane#byservice
+    %h2 Service status summary
+    %div#service-summary
+  %div.pane#details
+    %h2 Service details for all hosts
+    %div#services
+  %div.pane#notifications
+    %h2 Notifications
+    %table.services#notifications
+      %tr
+        %th Time
+        %th Host
+        %th Service
+        %th Event
+        %th Message

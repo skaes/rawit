@@ -17,7 +17,7 @@ module Rawit
     end
 
     def directories
-      processes.map{|_,s| s =~ /^\S*runsvdir\s+(-P)?(\S+)/ && $2}.compact
+      processes.map{|_,s| s =~ /^\S*runsvdir\s+(-P\s)?(\S+)/ && $2}.compact
     end
 
     def services

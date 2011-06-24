@@ -42,22 +42,30 @@ module Rawit
     end
 
     get '/' do
-      haml :index
+      redirect '/hosts', 302
+    end
+
+    get '/processes' do
+      @processes = @@manager.services.all
+      @selected_tab = '#processes'
+      haml :processes, :layout => !request.xhr?
+    end
+
+    get '/hosts' do
+      @hosts = @@manager.services.host_summary
+      @selected_tab = '#hosts'
+      haml :hosts, :layout => !request.xhr?
     end
 
     get '/services' do
-      @services = @@manager.services.all
-      haml :services, :layout => false
+      @services = @@manager.services.service_summary
+      @selected_tab = '#services'
+      haml :services, :layout => !request.xhr?
     end
 
-    get '/host-summary' do
-      @host_summary = @@manager.services.host_summary
-      haml :"host-summary", :layout => false
-    end
-
-    get '/service-summary' do
-      @service_summary = @@manager.services.service_summary
-      haml :"service-summary", :layout => false
+    get '/notifications' do
+      @selected_tab = '#notifications'
+      haml :notifications, :layout => !request.xhr?
     end
 
     post %r{/service/(stop|start|restart)} do

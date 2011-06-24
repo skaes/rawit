@@ -1,0 +1,14 @@
+%table.services#notification-list
+  %tr
+    %th Time
+    %th Host
+    %th Service
+    %th Event
+    %th Message
+  - (@notifications||[]).each do |e|
+    %tr
+      %td.time= e["time"]
+      %td.host= e["host"]
+      %td.service= e["service"]
+      %td.event= e["event"]
+      %td.message= e["message"]

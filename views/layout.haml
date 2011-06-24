@@ -5,10 +5,39 @@
     %meta(http-equiv="content-type" content="text/html;charset=UTF-8")
     %title Rawit - Service Manager
     %script(type="text/javascript" src="/js/jquery-1.6.1.min.js")
+    %script(type="text/javascript" src="/js/jquery-pjax.min.js")
+    %script(type="text/javascript" src="/js/rawit.js")
     %link(type="text/css" href="/css/rawit.css" rel="Stylesheet")
     %link(rel="shortcut icon" type="image/x-icon" href="/favicon.ico")
   %body
     %h1
       Rawit - Service Manager
       %img#logo(src="/rawit.jpg")
-    = yield
+    %div#tabs
+      %ul
+        %li.tab{:data => {:pane => '#hosts'}} Hosts
+        %li.tab{:data => {:pane => '#services'}} Services
+        %li.tab{:data => {:pane => '#processes'}} Processes
+        %li.tab{:data => {:pane => '#notifications'}} Notifications
+    %div#content
+      %div.pane#hosts
+        %h2 Host status summary
+        %div#by-host
+      %div.pane#services
+        %h2 Service status summary
+        %div#by-service
+      %div.pane#processes
+        %h2 Process status summary
+        %div#by-process
+      %div.pane#notifications
+        %h2 Notifications
+        = haml :notifications
+    %div#statusarea
+    :javascript
+      $(document).ready(function() {
+        $('.pane').hide();
+        $('.tab').click(click_tab);
+        update_loop();
+        connect_notifications();
+        window.setTimeout("select_tab('#{@selected_tab}')", 100);
+      });

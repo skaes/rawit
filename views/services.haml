@@ -1,25 +1,17 @@
-%table.services#services
+%table.services#by-service
   %tr
-    %th Host
     %th Service
-    %th Pid
-    %th Status
-    %th Since
-    %th Normally
-    %th Wants
+    %th Hosts Up
+    %th Hosts Down
     %th Action
-  - @services.each do |host, services|
-    - services.each do |s|
-      %tr
-        %td.host= host
-        %td{:class => needs_warning?(s) ? "name error" : "name"}= s['name']
-        %td.pid= s['pid']
-        %td.status= s['status']
-        %td.since= formatted_time(s['since'])
-        %td.normally= s['normally']
-        %td.wants= s['wants']
-        %td
-          %ul
-            - possible_actions(s).each_with_index do |a,i|
-              %li{:class => i==0 ? "first" : ""}
-                %a{:class => "service-action", :data => {:host => host, :service => s['name'], :action => a}}= a
+  - @services.each do |service, info|
+    - up, down, hosts = info.values_at("up", "down", "hosts")
+    %tr
+      %td.name= service
+      %td.up= up
+      %td.down= down
+      %td
+        %ul
+          - %w(start stop restart).each_with_index do |a,i|
+            %li{:class => i==0 ? "first" : ""}
+              %a{:class => "host-action", :data => {:host => hosts.join(' '), :service => service, :action => a}}= a

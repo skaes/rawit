@@ -1,21 +1,20 @@
 = rawit
 
+rawit is web ui service management console for runit and monit
+
 rawit is also known as "Bird's eye chili", see http://en.wikipedia.org/wiki/Rawit
 
 == Status
 
-So far this is just an experiment to try out something new (0mq).
-
-Expect the worst.
-
-Dragons hatching rotten eggs.
+Early alpha, but usable.
 
 If you feel adventurous and are on a Mac (should work on any system which has runit and 0mq)
 
-   sudo port install runit zmq
+   sudo port install zmq runit monit
+
    git clone git://github.com/skaes/rawit.git
    cd rawit
    bundle install
-   rake start
+   rake
 
 Then point your browser at http://localhost:4567 and start/stop/restart processes.

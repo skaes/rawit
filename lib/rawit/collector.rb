@@ -11,36 +11,96 @@ module Rawit
       Socket.gethostname
     end
 
-    def processes
-      `ps -e -o 'pid,command' | egrep -e 'runsvdir|runsv' | egrep -v 'grep|daemondo'`.chomp.split("\n").
-        map{|s| s =~ /^\s*(\d+)\s*(.+)$/ && [$1.to_i,$2]}.compact
-    end
-
-    def directories
-      processes.map{|_,s| s =~ /^\S*runsvdir\s+(-P\s)?(\S+)/ && $2}.compact
-    end
-
-    def services
-      patterns = directories.map{|d| d += '/*'}
-      Dir[*patterns].to_a
-    end
-
     def status
+      {:host => hostname, :services => runit_status + monit_status}
+    end
+
+    def runit_status
       result = []
-      unless services.empty?
-        `sv status #{services.join(' ')}`.chomp.split("\n").each do |l|
+      unless runit_services.empty?
+        `sv status #{runit_services.join(' ')}`.chomp.split("\n").each do |l|
           # logger.debug l
           service, logger = l.split(/;/)
           # run: /opt/local/var/service/test1: (pid 60957) 582s
           # down: /opt/local/var/service/test2: 240s, normally up
           if service =~ /^(run): (.+): \(pid (\d+)\) (\d+)s/
-            result << {:name => $2, :pid => $3.to_i, :status => $1, :since => $4.to_i}
+            result << {:type => "runit", :name => $2, :pid => $3.to_i, :status => $1, :since => $4.to_i}
           elsif service =~ /^(down): (.+): (\d+)s, normally (up|down)(, want (up|down))?/
-            result << {:name => $2, :status => $1, :since => $3.to_i, :normally => $4, :wants => $6}
+            result << {:type => "runit", :name => $2, :status => $1, :since => $3.to_i, :normally => $4, :wants => $6}
           end
         end
       end
-      {:host => hostname, :services => result}
+      result
     end
+
+    def runit_services
+      patterns = runsv_directories.map{|d| d += '/*'}
+      Dir[*patterns].to_a
+    end
+
+    def runsv_directories
+      runsv_processes.map{|_,s| s =~ /^\S*runsvdir\s+(-P\s)?(\S+)/ && $2}.compact
+    end
+
+    def runsv_processes
+      `ps -e -o 'pid,command' | egrep -e 'runsvdir|runsv' | egrep -v 'grep|daemondo'`.chomp.split("\n").
+        map{|s| s =~ /^\s*(\d+)\s*(.+)$/ && [$1.to_i,$2]}.compact
+    end
+
+    def monit_status
+      result = []
+      monit_processes.each do |_,c|
+        str = `sudo #{c} status`
+        result.concat(monit_parse(str.chomp))
+      end
+      result
+    end
+
+    def monit_processes
+      `ps -e -o 'pid,command' | egrep -e 'monit' | grep -v grep`.chomp.split("\n").
+        map{|s| s =~ /^\s*(\d+)\s*(.+)$/ && [$1.to_i,$2]}.compact
+    end
+
+    def monit_parse(str)
+      res = []
+      str.split(/\n\n/).each do |section|
+        next unless section =~ /Process/
+        res << parse_process_section(section)
+      end
+      res
+    end
+
+    def parse_process_section(e)
+      res = {:type => "monit"}
+      e.each_line do |line|
+        case line
+        when /^Process '(.*)'\s*$/
+          res[:name] = $1
+        when /^\s+status\s+(.*)\s*$/
+          res[:status] = convert_monit_status($1.strip)
+        when /^\s+pid\s+(.*)\s*$/
+          res[:pid] = $1.to_i
+        when /^\s+uptime\s+(.*)\s*$/
+          res[:since] = convert_monit_uptime($1.strip)
+        end
+      end
+      res
+    end
+
+    def convert_monit_status(s)
+      case s
+      when "running" then "run"
+      else "down"
+      end
+    end
+
+    def convert_monit_uptime(s)
+      if s =~ /(\d+d)?\s*(\d+h)?\s*(\d+m)?\s*(\d+s)?/
+        (($1.to_i * 24 + $2.to_i) * 60 + $3.to_i) *60 + $4.to_i
+      else
+        0
+      end
+    end
+
   end
 end

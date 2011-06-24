@@ -20,6 +20,8 @@ module Rawit
           %w(stop restart)
         when 'down'
           wants == 'up' ? %w(sysadmin) : %w(start)
+        else
+          []
         end
       end
 

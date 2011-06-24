@@ -12,12 +12,12 @@ task :start do
     f.puts "services: runsvdir #{my_dir}/services log:...................................................................."
   end
   puts "starting monit"
-  # system "sudo chown root #{monit_file}"
-  system "chmod 700 #{monit_file}"
-  system "monit -c #{monit_file}"
+  system "sudo chown root #{monit_file}"
+  system "sudo chmod 700 #{monit_file}"
+  system "sudo monit -c #{monit_file}"
   system "foreman start"
   puts "stopping monit"
-  system "monit -c #{monit_file} quit"
+  system "sudo monit -c #{monit_file} quit"
 end
 
 task :default => :start

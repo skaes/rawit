@@ -17,17 +17,13 @@ function action_click() {
   }
 };
 
-var refresh_interval = 5000;
-
 function get_hosts() {
   $.get('/hosts', function(summary){
     clear_status();
     $('#by-host').replaceWith(summary);
     $('#by-host .host-action').click(action_click);
-    window.setTimeout(get_hosts, refresh_interval);
   }).error(function() {
     $('#by-host').replaceWith('<div class="error bc" id="by-host">Error connecting to server.</div>');
-    window.setTimeout(get_hosts, refresh_interval);
   });
 };
 
@@ -36,10 +32,8 @@ function get_services() {
     clear_status();
     $('#by-service').replaceWith(summary);
     $('#by-service .host-action').click(action_click);
-    window.setTimeout(get_services, refresh_interval);
   }).error(function() {
     $('#by-service').replaceWith('<div class="error bc" id="by-service">Error connecting to server.</div>');
-    window.setTimeout(get_services, refresh_interval);
   });
 };
 
@@ -48,12 +42,21 @@ function get_processes() {
     clear_status();
     $('#by-process').replaceWith(services);
     $('#by-process .service-action').click(action_click);
-    window.setTimeout(get_processes, refresh_interval);
   }).error(function() {
     $('#by-process').replaceWith('<div class="error bc" id="by-process">Error connecting to server.</div>');
-    window.setTimeout(get_processes, refresh_interval);
   });
 };
+
+function get_all() {
+  get_hosts();
+  get_services();
+  get_processes();
+}
+
+function update_loop() {
+  get_all();
+  window.setTimeout(update_loop, 5000);
+}
 
 /* The web socket */
 var ws = null;

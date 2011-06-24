@@ -37,9 +37,7 @@
       $(document).ready(function() {
         $('.pane').hide();
         $('.tab').click(click_tab);
-        select_tab('#{@selected_tab}')
-        get_hosts();
-        get_services();
-        get_processes();
+        update_loop();
         connect_notifications();
+        window.setTimeout("select_tab('#{@selected_tab}')", 100);
       });

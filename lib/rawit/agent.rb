@@ -2,6 +2,10 @@ module Rawit
   class Agent
     include Logging
 
+    def initialize
+      @collector = Collector.new
+    end
+
     def run
       EM.run do
         trap_signals
@@ -13,7 +17,7 @@ module Rawit
     end
 
     def message
-      msg = Collector.new.status.to_json
+      msg = @collector.status.to_json
       logger.debug "sending #{msg.inspect}"
       msg
     end
@@ -32,8 +36,7 @@ module Rawit
         j = JSON.parse(m.copy_out_string)
         action = j["action"]
         service = j["service"]
-        cmd = "sv #{action} #{service}"
-        logger.info `#{cmd}`
+        @collector.execute(action, service)
       end
     end
 

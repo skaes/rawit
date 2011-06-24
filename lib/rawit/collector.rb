@@ -102,5 +102,23 @@ module Rawit
       end
     end
 
+    def execute(action, service)
+      services = service.split(/ +/)
+      sv_owned = services.select{|s| s =~ %r{/}}
+      monit_owned = services - sv_owned
+      unless sv_owned.blank?
+        cmd = "sv #{action} #{sv_owned.join(' ')}"
+        logger.info `#{cmd}`
+      end
+      unless monit_owned.blank?
+      monit_processes.each do |_,m|
+        monit_owned.each do |s|
+          cmd = "sudo #{m} #{action} #{s}"
+          logger.info `#{cmd}`
+          end
+        end
+      end
+    end
+
   end
 end

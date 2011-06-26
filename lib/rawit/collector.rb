@@ -43,7 +43,7 @@ module Rawit
     end
 
     def runsv_processes
-      `ps -e -o 'pid,command' | egrep -e 'runsvdir|runsv' | egrep -v 'grep|daemondo'`.chomp.split("\n").
+      `ps -e -o 'pid,command' | egrep -w -e 'runsvdir|runsv' | egrep -v 'grep|daemondo'`.chomp.split("\n").
         map{|s| s =~ /^\s*(\d+)\s*(.+)$/ && [$1.to_i,$2]}.compact
     end
 
@@ -57,7 +57,7 @@ module Rawit
     end
 
     def monit_processes
-      `ps -e -o 'pid,command' | egrep -e 'monit' | grep -v grep`.chomp.split("\n").
+      `ps -e -o 'pid,command' | egrep -w -e 'monit' | egrep -v 'grep|daemondo'`.chomp.split("\n").
         map{|s| s =~ /^\s*(\d+)\s*(.+)$/ && [$1.to_i,$2]}.compact
     end
 

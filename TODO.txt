@@ -1,0 +1,5 @@
+* figure out how to deal with processes running as different users
+* keep list of recent notifications in the server
+* switch to pjax?
+* access control for the web ui
+

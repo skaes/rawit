@@ -18,6 +18,7 @@ task :start do
   system "foreman start"
   puts "stopping monit"
   system "sudo monit -c #{monit_file} quit"
+  system "sudo chown #{ENV['USER']} #{monit_file}"
 end
 
 task :default => :start

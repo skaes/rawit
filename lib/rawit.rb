@@ -1,9 +1,4 @@
-begin
-  require "em-zeromq-c"
-rescue LoadError
-  require "rubygems"
-  require "em-zeromq-c"
-end
+require "em-zeromq-mri"
 require "json"
 require "active_support"
 require "active_support/core_ext"

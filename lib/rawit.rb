@@ -1,8 +1,8 @@
 begin
-  require "em-zeromq"
+  require "em-zeromq-c"
 rescue LoadError
   require "rubygems"
-  require "em-zeromq"
+  require "em-zeromq-c"
 end
 require "json"
 require "active_support"

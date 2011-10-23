@@ -53,7 +53,23 @@ function get_all() {
   get_processes();
 }
 
+function get_selected() {
+  var selected = $('.selected').data("pane");
+  switch (selected) {
+  case '#hosts':
+    get_hosts();
+    break;
+  case '#services':
+    get_services();
+    break;
+  case '#processes':
+    get_processes();
+    break;
+  }
+}
+
 function update_loop() {
+  // get_selected();
   get_all();
   window.setTimeout(update_loop, 5000);
 }
@@ -102,6 +118,7 @@ function select_tab(pane) {
   $('.pane').hide();
   $('.selected').removeClass("selected");
   tab.addClass("selected");
+  get_selected()
   $(pane).show();
 };
 

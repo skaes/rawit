@@ -57,6 +57,8 @@ module Rawit
     end
 
     def monit_processes
+      # disabled for security reasons
+      return []
       `ps -e -o 'pid,command' | egrep -w -e 'monit' | egrep -v 'grep|daemondo'`.chomp.split("\n").
         map{|s| s =~ /^\s*(\d+)\s*(.+)$/ && [$1.to_i,$2]}.compact
     end
@@ -102,7 +104,13 @@ module Rawit
       end
     end
 
+    KNOWN_ACTIONS = %w(start stop restart)
+
     def execute(action, service)
+      unless KNOWN_ACTIONS.include?(action.to_s)
+        logger.error "unknown action: #{action}"
+        return
+      end
       services = service.split(/ +/)
       sv_owned = services.select{|s| s =~ %r{/}}
       monit_owned = services - sv_owned

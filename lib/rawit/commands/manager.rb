@@ -5,7 +5,7 @@ module Rawit
     class Manager
       def self.execute
         opts = OptionParser.new
-        opts.banner = "Usage: rawit agent [options]"
+        opts.banner = "Usage: rawit manager [options]"
         opts.separator ""
         opts.separator "options:"
 

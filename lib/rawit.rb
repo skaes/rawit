@@ -1,4 +1,5 @@
-require "em-zeromq-mri"
+require "ffi-rzmq"
+require "em-zeromq"
 require "json"
 require "active_support"
 require "active_support/core_ext"
@@ -19,6 +20,7 @@ module Rawit
 
   mattr_accessor :logger
   self.logger = Logger.new($stdout)
+  $stdout.sync = true
   self.logger.level = Logger::INFO
 
   mattr_accessor :server

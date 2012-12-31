@@ -6,7 +6,7 @@ module Rawit
     class Notifier
       def self.execute
         opts = OptionParser.new
-        opts.banner = "Usage: rawit notifier command [options]"
+        opts.banner = "Usage: rawit notifier [options] event d1 ... dn"
         opts.separator ""
         opts.separator "options:"
 

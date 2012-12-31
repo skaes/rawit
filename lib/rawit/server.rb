@@ -1,10 +1,11 @@
 module Rawit
   require "sinatra/base"
+  require "haml"
 
   class Server < Sinatra::Base
     include Logging
 
-    set :public, "#{Rawit::ROOT}/public"
+    set :public_folder, "#{Rawit::ROOT}/public"
     set :views, "#{Rawit::ROOT}/views"
     set :haml, :format => :html5
 

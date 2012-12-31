@@ -13,10 +13,14 @@ module Rawit
     def run
       context = ZMQ::Context.new(1)
       socket = context.socket(ZMQ::PUSH)
-      socket.setsockopt(ZMQ::LINGER, 3000)
-      socket.connect("tcp://#{Rawit::server}:9000")
-      socket.send_string(message.to_json, ZMQ::NOBLOCK)
+      socket.setsockopt(ZMQ::LINGER, 1000)
+      socket.connect("tcp://#{Rawit::server}:5555")
+      data = message.to_json
+      if socket.send_string(data) < 0
+        logger.error "could not send message: #{ZMQ::Util.error_string}"
+      end
       socket.close
+      context.terminate
     end
 
     def message

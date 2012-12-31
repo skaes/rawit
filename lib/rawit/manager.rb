@@ -7,6 +7,7 @@ module Rawit
     attr_reader :services
 
     def initialize
+      logger.info "initializing rawit manager"
       @services = Rawit::Services.new
       @outbound_connections = {}
       setup_notifier
@@ -14,7 +15,7 @@ module Rawit
 
     def setup_notifier
       @sockets = []
-      EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 9002) do |ws|
+      EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 5557) do |ws|
         ws.onopen do
           logger.info "web socket connection established: #{ws.object_id}"
           @sockets << ws
@@ -27,6 +28,10 @@ module Rawit
 
         ws.onmessage do |msg|
           logger.info "web socket received message: #{ws.object_id}: #{msg}"
+        end
+
+        ws.onerror do |error|
+          logger.error error.inspect
         end
       end
     end
@@ -41,6 +46,7 @@ module Rawit
     def messages_received(messages)
       messages.each do |m|
         data = m.copy_out_string
+        m.close
         logger.debug "received service data: #{data}"
         j = JSON.parse(data)
         if j["event"]
@@ -68,34 +74,27 @@ module Rawit
       EM.stop_event_loop
     end
 
-    class PullHandler
-      def initialize(manager)
-        @manager = manager
-      end
-      def on_readable(socket, messages)
-        @manager.messages_received(messages)
-      end
-    end
-
     def setup_inbound
       @inbound = @context.socket(ZMQ::PULL)
-      @inbound_connection = @context.bind(@inbound, "tcp://0.0.0.0:9000", PullHandler.new(self))
+      @inbound.bind("tcp://0.0.0.0:5555")
+      @inbound.on(:message){|*messages| messages_received(messages)}
     end
 
     def setup_outbound(host)
       @outbound_connections[host] ||=
         begin
           socket = @context.socket(ZMQ::PUSH)
-          socket.setsockopt(ZMQ::HWM, 1)
+          socket.setsockopt(ZMQ::SNDHWM, 1)
           socket.setsockopt(ZMQ::LINGER, 1000) # milliseconds
           # ip = IPSocket.getaddress host
-          @context.connect(socket, "tcp://#{host}:9001")
+          socket.connect("tcp://#{host}:5556")
+          socket
         end
     end
 
     def send_command(host, message)
-      connection = setup_outbound(host)
-      if connection.socket.send_string(message, ZMQ::NOBLOCK)
+      socket = setup_outbound(host)
+      if socket.send_msg(message)
         logger.debug "sent service command"
       else
         logger.error "sending service command failed"

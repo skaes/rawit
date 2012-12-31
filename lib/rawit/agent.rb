@@ -34,6 +34,7 @@ module Rawit
     def messages_received(messages)
       messages.each do |m|
         j = JSON.parse(m.copy_out_string)
+        m.close
         action = j["action"]
         service = j["service"]
         @collector.execute(action, service)
@@ -43,31 +44,31 @@ module Rawit
     private
     def setup_outbound
       @outbound = @context.socket(ZMQ::PUSH)
-      @outbound.setsockopt(ZMQ::HWM, 1)
+      if defined?(ZMQ::SNDHWM)
+        @outbound.setsockopt(ZMQ::SNDHWM, 1)
+      else
+        @outbound.setsockopt(ZMQ::HWM, 1)
+      end
       @outbound.setsockopt(ZMQ::LINGER, 0)
-      @outbound_connection = @context.connect(@outbound, "tcp://#{Rawit::server}:9000")
+      @outbound.connect("tcp://#{Rawit::server}:5555")
       EM.add_periodic_timer(2) do
-        if @outbound_connection.socket.send_string(message, ZMQ::NOBLOCK)
-          logger.debug "sent service status"
-        else
-          logger.error "sending status failed"
+        begin
+          if @outbound.send_msg(message)
+            logger.debug "sent service status"
+          else
+            logger.error "sending status failed"
+          end
+        rescue Exception
+          $stderr.puts $!.inspect
         end
-      end
-    end
-
-    class PullHandler
-      def initialize(agent)
-        @agent = agent
-      end
-      def on_readable(socket, messages)
-        @agent.messages_received(messages)
       end
     end
 
     def setup_inbound
       @inbound = @context.socket(ZMQ::PULL)
       @inbound.setsockopt(ZMQ::LINGER, 1000) # millicesonds
-      @inbound_connection = @context.bind(@inbound, "tcp://0.0.0.0:9001", PullHandler.new(self))
+      @inbound.bind("tcp://0.0.0.0:5556")
+      @inbound.on(:message){|*messages| messages_received(messages)}
     end
 
   end

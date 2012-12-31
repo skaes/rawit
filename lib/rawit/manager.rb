@@ -15,7 +15,7 @@ module Rawit
 
     def setup_notifier
       @sockets = []
-      EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 5557) do |ws|
+      EventMachine::WebSocket.start(:host => "0.0.0.0", :port => Rawit.websockets_port) do |ws|
         ws.onopen do
           logger.info "web socket connection established: #{ws.object_id}"
           @sockets << ws
@@ -76,7 +76,7 @@ module Rawit
 
     def setup_inbound
       @inbound = @context.socket(ZMQ::PULL)
-      @inbound.bind("tcp://0.0.0.0:5555")
+      @inbound.bind("tcp://0.0.0.0:#{Rawit.agent_port}")
       @inbound.on(:message){|*messages| messages_received(messages)}
     end
 
@@ -87,7 +87,7 @@ module Rawit
           socket.setsockopt(ZMQ::SNDHWM, 1)
           socket.setsockopt(ZMQ::LINGER, 1000) # milliseconds
           # ip = IPSocket.getaddress host
-          socket.connect("tcp://#{host}:5556")
+          socket.connect("tcp://#{host}:#{Rawit.commands_port}")
           socket
         end
     end

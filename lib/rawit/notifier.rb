@@ -14,7 +14,7 @@ module Rawit
       context = ZMQ::Context.new(1)
       socket = context.socket(ZMQ::PUSH)
       socket.setsockopt(ZMQ::LINGER, 1000)
-      socket.connect("tcp://#{Rawit::server}:5555")
+      socket.connect("tcp://#{Rawit.server}:#{Rawit.agent_port}")
       data = message.to_json
       if socket.send_string(data) < 0
         logger.error "could not send message: #{ZMQ::Util.error_string}"

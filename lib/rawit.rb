@@ -26,4 +26,13 @@ module Rawit
   mattr_accessor :server
   self.server = "127.0.0.1"
 
+  mattr_accessor :base_port
+  self.base_port = 9600
+  # 9600-9611 are unassigned
+  # don't forget to change rawitXXX.js when changing the base_port
+
+  def self.agent_port; base_port; end
+  def self.commands_port; base_port + 1; end
+  def self.websockets_port; base_port + 2; end
+
 end

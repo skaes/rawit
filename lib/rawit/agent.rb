@@ -50,7 +50,7 @@ module Rawit
         @outbound.setsockopt(ZMQ::HWM, 1)
       end
       @outbound.setsockopt(ZMQ::LINGER, 0)
-      @outbound.connect("tcp://#{Rawit::server}:5555")
+      @outbound.connect("tcp://#{Rawit.server}:#{Rawit.agent_port}")
       EM.add_periodic_timer(2) do
         begin
           if @outbound.send_msg(message)
@@ -67,7 +67,7 @@ module Rawit
     def setup_inbound
       @inbound = @context.socket(ZMQ::PULL)
       @inbound.setsockopt(ZMQ::LINGER, 1000) # millicesonds
-      @inbound.bind("tcp://0.0.0.0:5556")
+      @inbound.bind("tcp://0.0.0.0:#{Rawit.commands_port}")
       @inbound.on(:message){|*messages| messages_received(messages)}
     end
 

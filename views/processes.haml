@@ -8,8 +8,8 @@
     %th Normally
     %th Wants
     %th Action
-  - @processes.each do |host, services|
-    - services.each do |s|
+  - @processes.sort.each do |host, services|
+    - services.sort_by{|s|s['name']}.each do |s|
       %tr
         %td.host= host
         %td{:class => needs_warning?(s) ? "name error" : "name"}= s['name']

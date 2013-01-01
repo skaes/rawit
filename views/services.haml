@@ -4,7 +4,7 @@
     %th Hosts Up
     %th Hosts Down
     %th Action
-  - @services.each do |service, info|
+  - @services.sort.each do |service, info|
     - up, down, hosts = info.values_at("up", "down", "hosts")
     %tr
       %td.name= service

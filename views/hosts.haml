@@ -4,7 +4,7 @@
     %th Services Up
     %th Services Down
     %th Action
-  - @hosts.each do |host, info|
+  - @hosts.sort.each do |host, info|
     - up, down, names = *info
     %tr
       %td.host= host

@@ -1,7 +1,7 @@
-require 'bundler'
+require 'bundler/setup'
 Bundler::GemHelper.install_tasks
 
-desc "start the devlopment environment"
+desc "start the development environment"
 task :start do
   my_dir = File.expand_path('..', __FILE__)
   monit_file = "#{my_dir}/etc/monitrc"

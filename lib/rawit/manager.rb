@@ -95,9 +95,9 @@ module Rawit
     def send_command(host, message)
       socket = setup_outbound(host)
       if socket.send_msg(message)
-        logger.debug "sent service command"
+        logger.debug "sent service command. dest=#{host}"
       else
-        logger.error "sending service command failed"
+        logger.error "sending service command failed. dest=#{host}"
       end
     end
 

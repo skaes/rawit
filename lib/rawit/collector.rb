@@ -106,16 +106,17 @@ module Rawit
 
     KNOWN_ACTIONS = %w(start stop restart)
 
-    def execute(action, service)
+    def execute(action, services)
       unless KNOWN_ACTIONS.include?(action.to_s)
         logger.error "unknown action: #{action}"
         return
       end
-      services = service.split(/ +/)
-      sv_owned = services.select{|s| s =~ %r{/}}
-      monit_owned = services - sv_owned
-      sv_owned.each do |service|
-        cmd = "sv -w 10 #{action} #{service}"
+      sv_action = action == "restart" ? "force-restart" : action
+      paths = services.split(/ +/)
+      sv_owned = paths.select{|s| s =~ %r{/}}
+      monit_owned = paths - sv_owned
+      sv_owned.each do |path|
+        cmd = "sv -w 10 #{sv_action} #{path}"
         logger.info `#{cmd}`
         sleep 1
       end

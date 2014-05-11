@@ -20,11 +20,11 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.specification_version = 3
-  s.add_runtime_dependency("activesupport",  ["~> 3.0"])
+  s.add_runtime_dependency("activesupport",  [">= 4.1.1"])
   s.add_runtime_dependency("i18n",           ["~> 0.6"])
-  s.add_runtime_dependency("json",           ["~> 1.5"])
-  s.add_runtime_dependency("em-zeromq",      [">= 0.4.0"])
-  s.add_runtime_dependency("em-websocket",   ["~> 0.3"])
+  s.add_runtime_dependency("json",           ["~> 1.8"])
+  s.add_runtime_dependency("em-zeromq",      [">= 0.5.0"])
+  s.add_runtime_dependency("em-websocket",   [">= 0.5.1"])
 
   s.add_development_dependency("rake",     [">= 0"])
   s.add_development_dependency("wirble",     [">= 0"])

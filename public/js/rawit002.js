@@ -80,7 +80,7 @@ var ws = null;
 /* connect to the notification data stream */
 function connect_notifications() {
   if ( ws == null ) {
-    ws = new WebSocket("ws://" + document.location.hostname + ":9602/");
+    ws = new WebSocket("ws://" + document.location.hostname + ":9722/");
     ws.onmessage = function(evt) { update_notifications(JSON.parse(evt.data)); };
     ws.onclose = function() { ws = null; window.setTimeout(connect_notifications, 5000); };
     ws.onopen = function() { ws.send('Hi there'); };

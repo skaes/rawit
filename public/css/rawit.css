@@ -57,6 +57,7 @@ h2 {
 .services ul {
   margin: 0px;
   padding: 0px;
+  white-space: nowrap;
 }
 
 .services ul li {

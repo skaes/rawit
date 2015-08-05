@@ -22,7 +22,16 @@ module Rawit
         opts.parse!(ARGV)
 
         require 'rawit'
-        EM.run { Rawit::Server.run! }
+        require 'rack'
+        EM.run do
+          app = Rack::Builder.app do
+            map '/' do
+              run Rawit::Server.new
+            end
+          end
+
+          Rack::Server.start(:app => app, :server => 'thin', :Host => "0.0.0.0", :Port => 4567)
+        end
       end
     end
   end

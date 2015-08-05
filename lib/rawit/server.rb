@@ -1,6 +1,7 @@
 module Rawit
   require "sinatra/base"
   require "haml"
+  require "tilt/haml"
 
   class Server < Sinatra::Base
     include Logging
@@ -8,8 +9,6 @@ module Rawit
     set :public_folder, "#{Rawit::ROOT}/public"
     set :views, "#{Rawit::ROOT}/views"
     set :haml, :format => :html5
-    set :port, 4567
-    set :bind, "0.0.0.0"
 
     configure do
       @@manager = Rawit::Manager.new.run

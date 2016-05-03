@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("em-websocket",   [">= 0.5.1"])
   s.add_runtime_dependency("em-zeromq",      [">= 0.5.0"])
   s.add_runtime_dependency("em-zeromq",      ["~> 0.5.0"])
+  s.add_runtime_dependency("ffi-rzmq-core",  ["~> 1.0.5"])
   s.add_runtime_dependency("ffi-rzmq",       ["~> 2.0.1"])
   s.add_runtime_dependency("haml",           ["~> 4.0.6"])
   s.add_runtime_dependency("i18n",           ["~> 0.6"])

@@ -6,7 +6,7 @@ task :start do
   my_dir = File.expand_path('..', __FILE__)
   monit_file = "#{my_dir}/etc/monitrc"
   procfile = "#{my_dir}/Procfile"
-  verbose = ENV['debug'] == '1' ? " -v" : ""
+  verbose = ENV['DEBUG'] == '1' ? " -v" : ""
   File.open(procfile, "w") do |f|
     f.puts "agent: bundle exec rawit agent#{verbose}"
     # f.puts "manager: bundle exec rawit manager#{verbose}"

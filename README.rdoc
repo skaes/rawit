@@ -1,6 +1,6 @@
 = rawit
 
-rawit is web ui service management console for runit and monit
+rawit is web ui service management console for runit, monit and docker-compose.
 
 rawit is also known as "Bird's eye chili", see http://en.wikipedia.org/wiki/Rawit
 
@@ -18,3 +18,10 @@ If you feel adventurous and are on a Mac (should work on any system which has ru
    rake
 
 Then point your browser at http://localhost:4567 and start/stop/restart processes.
+
+
+== Environment Variables
+
+Since rawit uses the docker-compose command internally, all variables
+of listed in https://docs.docker.com/compose/reference/envvars/ are
+supported.

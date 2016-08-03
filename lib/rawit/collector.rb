@@ -12,7 +12,7 @@ module Rawit
     end
 
     def status
-      {:host => hostname, :services => runit_status + monit_status}
+      {:host => hostname, :services => runit_status + monit_status + docker_status}
     end
 
     def runit_status
@@ -104,7 +104,64 @@ module Rawit
       end
     end
 
-    KNOWN_ACTIONS = %w(start stop restart)
+
+    # NETWORK ID                                                         NAME                   DRIVER              SCOPE
+    # e8f21ef52525d159659cf33e58db7360a07b776fe0e89fda3559aca6ed7a269b   beetle_default         bridge              local
+    # f5693cbf79f5ae54328ecf6ba3e4774c098987357a36563b8240e1ac2d3d3bb9   bridge                 bridge              local
+    # adf73a0f039cd60531a0dee89493d32ebde9613e2c0268dd3e27d3b54102edd9   host                   host                local
+    # ae61976c952c88c79b716cf4cbe3f5da423fd1646076931f1612d2ccc9c74ab1   logjamdocker_default   bridge              local
+    # d19984ce4411b5005e3581d58a2c9438772f6c781ef5eb5c750e078632bd24a7   none                   null                local
+    # 53084365a37b08c79eea8bf21e51821ef5d019be4ff5420912faebbbdd9350e0   rawit_default          bridge              local
+    # 1ce1ed0a3cf658bcfd4f0ae5f55026ac07ba7b3bb0a634256b671fd18f096508   timebandits_default    bridge              local
+    def docker_network_prefixes
+      networks = `docker network ls`.chomp.split("\n")[1..-1]
+      networks.map{|l| l.split[1].sub(/bridge|host|none|_default\z/,'')}.reject(&:empty?)
+    end
+
+    def docker_services
+      `docker-compose config --services 2>&1`.chomp.split("\n")
+    end
+
+    def docker_containers
+      prefixes = docker_network_prefixes
+      uptime = docker_uptime
+      `docker-compose ps`.chomp.split("\n")[2..-1].map do |l|
+        name = l.split.first
+        since = uptime[name]
+        name.sub!(/_\d+\z/,'')
+        prefixes.each{|p| name.sub!(/\A#{p}_/,'')}
+        status = l =~ / (Up)|(Paused)|(Exit) \d+/ && ($1||$2||$3).downcase
+        [name, status, since]
+      end
+    end
+
+    def convert_docker_status(status)
+      case status
+      when "up" then "up"
+      when "exit" then "exited"
+      when "paused" then "paused"
+      end
+    end
+
+    def docker_uptime
+      `docker ps -a --format '{{.Names}}:{{.Status}}'`.chomp.split("\n").each_with_object({}) do |l,h|
+        name, since = l.split(':')
+        h[name] = since.gsub(/ago|Up|Exited \(\d+\)/,'').strip
+      end
+    end
+
+    def docker_status
+      docker_containers.map do |name, status, uptime|
+        {
+          :type => :docker,
+          :name => name,
+          :status => convert_docker_status(status),
+          :since => uptime
+        }
+      end
+    end
+
+    KNOWN_ACTIONS = %w(start stop restart unpause)
 
     def execute(action, services)
       unless KNOWN_ACTIONS.include?(action.to_s)
@@ -114,7 +171,8 @@ module Rawit
       sv_action = action == "restart" ? "force-restart" : action
       paths = services.split(/ +/)
       sv_owned = paths.select{|s| s =~ %r{/}}
-      monit_owned = paths - sv_owned
+      monit_owned = []
+      docker_owned = paths - sv_owned
       sv_owned.each do |path|
         cmd = "sv -w 10 #{sv_action} #{path}"
         logger.info `#{cmd}`
@@ -127,6 +185,11 @@ module Rawit
             logger.info `#{cmd}`
           end
         end
+      end
+      unless docker_owned.blank?
+        cmd = "docker-compose #{action} #{docker_owned.join(' ')}"
+        logger.info cmd
+        logger.info `#{cmd}`
       end
     end
 

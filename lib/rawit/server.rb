@@ -18,10 +18,12 @@ module Rawit
       def possible_actions(service)
         status, wants = service.values_at('status', 'wants')
         case status
-        when 'run'
+        when 'run','up'
           %w(stop restart)
-        when 'down'
+        when 'down','exited'
           wants == 'up' ? %w(sysadmin) : %w(start)
+        when 'paused'
+          %w(unpause)
         else
           []
         end
@@ -33,6 +35,7 @@ module Rawit
       end
 
       def formatted_time(seconds)
+        return seconds if seconds.is_a?(String)
         days, hrs = seconds.to_i.divmod(3600*24)
         hrs, mins = hrs.divmod(3600)
         mins, secs = mins.divmod(60)
@@ -72,7 +75,7 @@ module Rawit
       haml :notifications, :layout => !request.xhr?
     end
 
-    post %r{/service/(stop|start|restart)} do
+    post %r{/service/(stop|start|restart|unpause)} do
       pass unless request.xhr?
       action = params[:captures].first
       request.body.rewind  # in case someone already read it
